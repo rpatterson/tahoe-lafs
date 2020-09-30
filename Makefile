@@ -56,7 +56,7 @@ test-venv-coverage:
 	$(VIRTUAL_ENV)/bin/coverage run -m twisted.trial \
 		$(TEST_SUITE) || test_exit="$$?"
 	$(VIRTUAL_ENV)/bin/coverage combine
-	$(VIRTUAL_ENV)/bin/coverage xml || true
+	$(VIRTUAL_ENV)/bin/coverage html || true
 	$(VIRTUAL_ENV)/bin/coverage report
 	if [ ! -z "$$test_exit" ]; then exit "$$test_exit"; fi
 .PHONY: test-py3-all
