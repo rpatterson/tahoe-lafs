@@ -53,7 +53,7 @@ test-venv-coverage:
 # Special handling for reporting coverage even when the test run fails
 	rm -f ./.coverage.*
 	test_exit=
-	$(VIRTUAL_ENV)/bin/coverage run -m twisted.trial --rterrors --reporter=timing \
+	$(VIRTUAL_ENV)/bin/coverage run -m twisted.trial \
 		$(TEST_SUITE) || test_exit="$$?"
 	$(VIRTUAL_ENV)/bin/coverage combine
 	$(VIRTUAL_ENV)/bin/coverage xml || true

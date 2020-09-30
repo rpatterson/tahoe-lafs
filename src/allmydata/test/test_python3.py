@@ -35,7 +35,7 @@ class Python3PortingEffortTests(SynchronousTestCase):
         tahoe_lafs_module_names = set(all_module_names("allmydata"))
         ported_names = set(ported_module_names())
         self.assertEqual(
-            tahoe_lafs_module_names - ported_names,
+            sorted(tahoe_lafs_module_names - ported_names),
             set(),
             "Some unported modules remain: {}".format(
                 unported_report(
