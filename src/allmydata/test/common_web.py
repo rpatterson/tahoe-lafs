@@ -7,18 +7,22 @@ from twisted.internet.defer import (
 )
 from twisted.web.error import Error
 
-from nevow.context import WebContext
-from nevow.testutil import FakeRequest
-from nevow.appserver import (
-    processingFailed,
-    DefaultExceptionHandler,
-)
-from nevow.inevow import (
-    ICanHandleException,
-    IRequest,
-    IResource as INevowResource,
-    IData,
-)
+# BBB: Disable the web framework until a Python 3 replacement is in place.
+from future.utils import PY2
+if PY2:
+    from nevow.context import WebContext
+    from nevow.testutil import FakeRequest
+    from nevow.appserver import (
+        processingFailed,
+        DefaultExceptionHandler,
+    )
+    from nevow.inevow import (
+        ICanHandleException,
+        IRequest,
+        IResource as INevowResource,
+        IData,
+    )
+
 
 @inlineCallbacks
 def do_http(method, url, **kwargs):

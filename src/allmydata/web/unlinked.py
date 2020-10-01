@@ -1,5 +1,6 @@
 
 import urllib
+
 from twisted.web import http
 from twisted.internet import defer
 from twisted.python.filepath import FilePath
@@ -10,7 +11,14 @@ from twisted.web.template import (
     renderElement,
     tags,
 )
-from nevow import url
+
+# BBB: Disable the web framework until a Python 3 replacement is in place
+from future.utils import PY2
+if PY2:
+    from nevow import url
+else:
+    url = None
+
 from allmydata.immutable.upload import FileHandle
 from allmydata.mutable.publish import MutableFileHandle
 from allmydata.web.common import (

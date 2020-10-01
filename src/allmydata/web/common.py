@@ -10,8 +10,19 @@ from twisted.web import (
     template,
 )
 from twisted.python import log
-from nevow import appserver
-from nevow.inevow import IRequest
+
+# BBB: Disable the web framework until a Python 3 replacement is in place
+from future.utils import PY2
+if PY2:
+    from nevow.appserver import DefaultExceptionHandler
+    from nevow.inevow import IRequest
+else:
+    class DefaultExceptionHandler(object):
+        """
+        BBB: Disable the web framework until a Python 3 replacement is in place.
+        """
+        pass
+
 from allmydata import blacklist
 from allmydata.interfaces import (
     EmptyPathnameComponentError,
@@ -319,7 +330,7 @@ def humanize_failure(f):
     return humanize_exception(f.value)
 
 
-class MyExceptionHandler(appserver.DefaultExceptionHandler, object):
+class MyExceptionHandler(DefaultExceptionHandler, object):
     def simple(self, ctx, text, code=http.BAD_REQUEST):
         req = IRequest(ctx)
         req.setResponseCode(code)
@@ -357,7 +368,7 @@ class MyExceptionHandler(appserver.DefaultExceptionHandler, object):
         if not accept:
             accept = "*/*"
         if "*/*" in accept or "text/*" in accept or "text/html" in accept:
-            super = appserver.DefaultExceptionHandler
+            super = DefaultExceptionHandler
             return super.renderHTTP_exception(self, ctx, f)
         # use plain text
         traceback = f.getTraceback()

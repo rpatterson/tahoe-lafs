@@ -1,0 +1,1 @@
+Fix py3 test runner exceptions that were stopping the full test suite frrom running.

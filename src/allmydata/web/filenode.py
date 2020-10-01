@@ -8,7 +8,12 @@ from twisted.web.resource import (
     ErrorPage,
 )
 
-from nevow import url
+# BBB: Disable the web framework until a Python 3 replacement is in place
+from future.utils import PY2
+if PY2:
+    from nevow import url
+else:
+    url = None
 
 from allmydata.interfaces import ExistingChildError
 from allmydata.monitor import Monitor

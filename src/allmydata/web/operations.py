@@ -1,6 +1,6 @@
 
 import time
-from nevow import url
+
 from twisted.web.template import (
     renderer,
     tags as T,
@@ -11,6 +11,13 @@ from twisted.web import resource
 from twisted.web.http import NOT_FOUND
 from twisted.web.html import escape
 from twisted.application import service
+
+# BBB: Disable the web framework until a Python 3 replacement is in place
+from future.utils import PY2
+if PY2:
+    from nevow import url
+else:
+    url = None
 
 from allmydata.web.common import (
     WebError,

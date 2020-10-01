@@ -7,11 +7,22 @@ from bs4 import BeautifulSoup
 from twisted.trial import unittest
 from twisted.internet import defer
 
-from nevow.inevow import IRequest
+from zope import interface
 from zope.interface import implementer
 from twisted.web.server import Request
 from twisted.web.test.requesthelper import DummyChannel
 from twisted.web.template import flattenString
+
+# BBB: Disable the web framework until a Python 3 replacement is in place
+from future.utils import PY2
+if PY2:
+    from nevow.inevow import IRequest
+else:
+    class IRequest(interface.Interface):
+        """
+        BBB: Disable the web framework until a Python 3 replacement is in place.
+        """
+        pass
 
 from allmydata import check_results, uri
 from allmydata import uri as tahoe_uri

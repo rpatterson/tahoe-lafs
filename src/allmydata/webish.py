@@ -6,9 +6,21 @@ from twisted.internet.address import (
     IPv4Address,
     IPv6Address,
 )
-from nevow import appserver, inevow
-from allmydata.util import log, fileutil
 
+# BBB: Disable the web framework until a Python 3 replacement is in place.
+from future.utils import PY2
+if PY2:
+    from nevow import appserver, inevow
+    from nevow.appserver import NevowRequest
+else:
+    appserver = inevow = None
+    class NevowRequest(object):
+        """
+        BBB: Disable the web framework until a Python 3 replacement is in place.
+        """
+        pass
+
+from allmydata.util import log, fileutil
 from allmydata.web import introweb, root
 from allmydata.web.common import MyExceptionHandler
 from allmydata.web.operations import OphandleTable
@@ -25,7 +37,7 @@ from .web.storage_plugins import (
 # surgery may induce a dependency upon a particular version of twisted.web
 
 parse_qs = http.parse_qs
-class MyRequest(appserver.NevowRequest, object):
+class MyRequest(NevowRequest, object):
     fields = None
     _tahoe_request_had_error = None
 
