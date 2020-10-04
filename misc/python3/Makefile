@@ -29,6 +29,10 @@ test-py3-all-before:
 test-py3-all-diff:
 	rm -f ../../.tox/make-test-py3-all-new.log ../../.tox/make-test-py3-all.diff
 	$(MAKE) ../../.tox/make-test-py3-all.diff
+.PHONY: test-py3-all-swap
+## Swap the new test output to the old, before log to compare the next set of changes
+test-py3-all-swap:
+	mv ../../.tox/make-test-py3-all-new.log ../../.tox/make-test-py3-all-old.log
 
 
 # Real targets
