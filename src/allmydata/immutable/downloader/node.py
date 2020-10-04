@@ -257,7 +257,8 @@ class DownloadNode(object):
             self._active_segment.add_shares(shares)
     def no_more_shares(self):
         self._no_more_shares = True
-        if self._active_segment:
+        # FIXME: The tests intermittently fail to cover this condition
+        if self._active_segment:  # pragma: no cover
             self._active_segment.no_more_shares()
 
     # things called by our Share instances
