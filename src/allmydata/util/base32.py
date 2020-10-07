@@ -123,7 +123,7 @@ def init_s8():
 s8 = init_s8()
 
 def could_be_base32_encoded(s, s8=s8, tr=bytes.translate, identitytranstable=identitytranstable, chars=chars):
-    precondition(isinstance(s, bytes), s)
+    precondition(isinstance(s, str), s)
     if s == b'':
         return True
     s = bytes(s)  # On Python 2, make sure we're using modern bytes

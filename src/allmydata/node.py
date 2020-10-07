@@ -380,7 +380,7 @@ class _Config(object):
         return it.
         """
         privname = os.path.join(self._basedir, "private", name)
-        with open(privname, "wb") as f:
+        with open(privname, "w") as f:
             f.write(value)
 
     def get_private_config(self, name, default=_None):
@@ -549,7 +549,7 @@ def _convert_tub_port(s):
     :returns: a proper Twisted endpoint string like (`tcp:X`) is `s`
         is a bare number, or returns `s` as-is
     """
-    if re.search(r'^\d+$', s):
+    if re.search(r'^\\d+$', s):
         return "tcp:{}".format(int(s))
     return s
 
@@ -742,7 +742,10 @@ class Node(service.MultiService):
         if self.tub is not None:
             self.nodeid = b32decode(self.tub.tubID.upper())  # binary format
             self.short_nodeid = b32encode(self.nodeid).lower()[:8]  # for printing
-            self.config.write_config_file("my_nodeid", b32encode(self.nodeid).lower() + "\n")
+            self.config.write_config_file(
+                "my_nodeid",
+                b32encode(self.nodeid).lower().decode("ascii") + "\n",
+            )
             self.tub.setServiceParent(self)
         else:
             self.nodeid = self.short_nodeid = None

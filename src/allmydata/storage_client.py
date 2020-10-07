@@ -28,8 +28,6 @@ the foolscap-based server implemented in src/allmydata/storage/*.py .
 #
 # 6: implement other sorts of IStorageClient classes: S3, etc
 
-from past.builtins import unicode
-
 import re, time, hashlib
 try:
     from ConfigParser import (
@@ -38,11 +36,19 @@ try:
 except ImportError:
     from configparser import NoSectionError
 import attr
+
+# Python 2 backwards compatibility
+from future.utils import PY2
+from past.builtins import unicode
+if PY2:
+    from future.builtins import bytes
+
 from zope.interface import (
     Attribute,
     Interface,
     implementer,
 )
+
 from twisted.internet import defer
 from twisted.application import service
 from twisted.plugin import (
@@ -55,6 +61,7 @@ from foolscap.api import eventually
 from foolscap.reconnector import (
     ReconnectionInfo,
 )
+
 from allmydata.interfaces import (
     IStorageBroker,
     IDisplayableServer,
@@ -260,7 +267,7 @@ class StorageFarmBroker(service.MultiService):
     # these two are used in unit tests
     def test_add_rref(self, serverid, rref, ann):
         s = self._make_storage_server(
-            serverid.decode("ascii"),
+            serverid,
             {"ann": ann.copy()},
         )
         s._rref = rref
@@ -293,8 +300,8 @@ class StorageFarmBroker(service.MultiService):
         self._threshold_listeners = remaining
 
     def _got_announcement(self, key_s, ann):
-        precondition(isinstance(key_s, str), key_s)
-        precondition(key_s.startswith("v0-"), key_s)
+        precondition(isinstance(key_s, bytes), key_s)
+        precondition(key_s.startswith(b"v0-"), key_s)
         precondition(ann["service-name"] == "storage", ann["service-name"])
         server_id = key_s
         if server_id in self._static_server_ids:
@@ -304,7 +311,7 @@ class StorageFarmBroker(service.MultiService):
                     level=log.UNUSUAL)
             return
         s = self._make_storage_server(
-            server_id.decode("utf-8"),
+            server_id,
             {u"ann": ann},
         )
         server_id = s.get_serverid()

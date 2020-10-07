@@ -274,7 +274,7 @@ class PluginMatchedAnnouncement(SyncTestCase):
             storage_plugin=b"tahoe-lafs-dummy-v1",
             plugin_config=None,
         )
-        server_id = b"v0-abcdef"
+        server_id = "v0-abcdef"
         ann = {
             u"service-name": u"storage",
             u"storage-options": [{
@@ -295,15 +295,15 @@ class PluginMatchedAnnouncement(SyncTestCase):
         configuration is matched and the plugin's storage client is used.
         """
         plugin_config = {
-            b"abc": b"xyz",
+            "abc": "xyz",
         }
-        plugin_name = b"tahoe-lafs-dummy-v1"
+        plugin_name = "tahoe-lafs-dummy-v1"
         yield self.make_node(
             introducer_furl=SOME_FURL,
             storage_plugin=plugin_name,
             plugin_config=plugin_config,
         )
-        server_id = b"v0-abcdef"
+        server_id = "v0-abcdef"
         ann = {
             u"service-name": u"storage",
             u"storage-options": [{
@@ -354,7 +354,7 @@ class PluginMatchedAnnouncement(SyncTestCase):
             storage_plugin=plugin_name,
             plugin_config=None,
         )
-        server_id = b"v0-abcdef"
+        server_id = "v0-abcdef"
         ann = {
             u"service-name": u"storage",
             u"storage-options": [{

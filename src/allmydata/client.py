@@ -147,7 +147,7 @@ def _make_secret():
     Returns a base32-encoded random secret of hashutil.CRYPTO_VAL_SIZE
     bytes.
     """
-    return base32.b2a(os.urandom(hashutil.CRYPTO_VAL_SIZE)) + b"\n"
+    return base32.b2a(os.urandom(hashutil.CRYPTO_VAL_SIZE)).decode("ascii") + "\n"
 
 
 class SecretHolder(object):
@@ -780,7 +780,7 @@ class _Client(node.Node, pollmixin.PollMixin):
                 # pubkey-based serverid
                 vk_string = ed25519.string_from_verifying_key(self._node_public_key)
                 vk_bytes = remove_prefix(vk_string, ed25519.PUBLIC_KEY_PREFIX)
-                seed = base32.b2a(vk_bytes)
+                seed = base32.b2a(vk_bytes).decode("ascii")
             self.config.write_config_file("permutation-seed", seed+"\n")
         return seed.strip()
 
@@ -806,7 +806,7 @@ class _Client(node.Node, pollmixin.PollMixin):
 
         config_storedir = self.get_config(
             "storage", "storage_dir", self.STOREDIR,
-        ).decode('utf-8')
+        )
         storedir = self.config.get_config_path(config_storedir)
 
         data = self.config.get_config("storage", "reserved_space", None)
@@ -971,7 +971,7 @@ class _Client(node.Node, pollmixin.PollMixin):
         """
         self.config.write_private_config(
             'api_auth_token',
-            urlsafe_b64encode(os.urandom(32)) + b'\n',
+            urlsafe_b64encode(os.urandom(32)).decode("ascii") + '\n',
         )
 
     def get_storage_broker(self):
@@ -1021,7 +1021,7 @@ class _Client(node.Node, pollmixin.PollMixin):
         c = ControlServer()
         c.setServiceParent(self)
         control_url = self.control_tub.registerReference(c)
-        self.config.write_private_config("control.furl", control_url + b"\n")
+        self.config.write_private_config("control.furl", control_url + "\n")
 
     def init_helper(self):
         self.helper = Helper(self.config.get_config_path("helper"),
