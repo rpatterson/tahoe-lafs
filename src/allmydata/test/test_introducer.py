@@ -129,9 +129,9 @@ class Node(testutil.SignalMixin, testutil.ReallyEqualMixin, AsyncTestCase):
         basedir = u"introducer.Node.test_web_static"
         create_node_dir(basedir, "testing")
         fileutil.write(os.path.join(basedir, "tahoe.cfg"),
-                       "[node]\n" +
-                       "web.port = tcp:0:interface=127.0.0.1\n" +
-                       "web.static = relative\n")
+                       b"[node]\n" +
+                       b"web.port = tcp:0:interface=127.0.0.1\n" +
+                       b"web.static = relative\n")
         c = yield create_introducer(basedir)
         w = c.getServiceNamed("webish")
         abs_basedir = fileutil.abspath_expanduser_unicode(basedir)
@@ -206,7 +206,7 @@ class Client(AsyncTestCase):
 
         private_key, public_key = ed25519.create_signing_keypair()
         public_key_str = ed25519.string_from_verifying_key(public_key)
-        pubkey_s = remove_prefix(public_key_str, "pub-")
+        pubkey_s = remove_prefix(public_key_str, b"pub-")
 
         # ann1: ic1, furl1
         # ann1a: ic1, furl1a (same SturdyRef, different connection hints)
@@ -767,7 +767,10 @@ class Announcements(AsyncTestCase):
         furl1 = "pb://62ubehyunnyhzs7r6vdonnm2hpi52w6y@127.0.0.1:0/swissnum"
 
         private_key, public_key = ed25519.create_signing_keypair()
-        public_key_str = remove_prefix(ed25519.string_from_verifying_key(public_key), "pub-")
+        public_key_str = remove_prefix(
+            ed25519.string_from_verifying_key(public_key),
+            b"pub-",
+        )
 
         ann_t0 = make_ann_t(client_v2, furl1, private_key, 10)
         canary0 = Referenceable()
@@ -983,7 +986,10 @@ class DecodeFurl(SyncTestCase):
         m = re.match(r'pb://(\w+)@', furl)
         assert m
         nodeid = b32decode(m.group(1).upper())
-        self.failUnlessEqual(nodeid, "\x9fM\xf2\x19\xcckU0\xbf\x03\r\x10\x99\xfb&\x9b-\xc7A\x1d")
+        self.failUnlessEqual(
+            b"\x9fM\xf2\x19\xcckU0\xbf\x03\r\x10\x99\xfb&\x9b-\xc7A\x1d",
+            nodeid,
+        )
 
 class Signatures(SyncTestCase):
 
@@ -995,11 +1001,11 @@ class Signatures(SyncTestCase):
         (msg, sig, key) = ann_t
         self.failUnlessEqual(type(msg), type("".encode("utf-8"))) # bytes
         self.failUnlessEqual(json.loads(msg.decode("utf-8")), ann)
-        self.failUnless(sig.startswith("v0-"))
-        self.failUnless(key.startswith("v0-"))
+        self.failUnless(sig.startswith(b"v0-"))
+        self.failUnless(key.startswith(b"v0-"))
         (ann2,key2) = unsign_from_foolscap(ann_t)
         self.failUnlessEqual(ann2, ann)
-        self.failUnlessEqual("pub-" + key2, public_key_str)
+        self.failUnlessEqual(b"pub-" + key2, public_key_str)
 
         # not signed
         self.failUnlessRaises(UnknownKeyError,
@@ -1014,9 +1020,9 @@ class Signatures(SyncTestCase):
 
         # unrecognized signatures
         self.failUnlessRaises(UnknownKeyError,
-                              unsign_from_foolscap, (bad_msg, "v999-sig", key))
+                              unsign_from_foolscap, (bad_msg, b"v999-sig", key))
         self.failUnlessRaises(UnknownKeyError,
-                              unsign_from_foolscap, (bad_msg, sig, "v999-key"))
+                              unsign_from_foolscap, (bad_msg, sig, b"v999-key"))
 
     def test_unsigned_announcement(self):
         ed25519.verifying_key_from_string(b"pub-v0-wodst6ly4f7i7akt2nxizsmmy2rlmer6apltl56zctn67wfyu5tq")
@@ -1032,9 +1038,11 @@ class Signatures(SyncTestCase):
             "invalid",
         )
         self.assertEqual(0, ic._debug_counts["inbound_announcement"])
-        ic.got_announcements([
-            ("message", "v0-aaaaaaa", "v0-wodst6ly4f7i7akt2nxizsmmy2rlmer6apltl56zctn67wfyu5tq")
-        ])
+        ic.got_announcements([(
+            b"message",
+            b"v0-aaaaaaa",
+            b"v0-wodst6ly4f7i7akt2nxizsmmy2rlmer6apltl56zctn67wfyu5tq",
+        )])
         # we should have rejected this announcement due to a bad signature
         self.assertEqual(0, ic._debug_counts["inbound_announcement"])
 
