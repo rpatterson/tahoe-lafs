@@ -19,7 +19,6 @@ if PY2:
     # Don't import bytes or str, to prevent future's newbytes leaking and
     # breaking code that only expects normal bytes.
     from future.builtins import filter, map, zip, ascii, chr, hex, input, next, oct, open, pow, round, super, dict, list, object, range, max, min  # noqa: F401
-    str = unicode
     from builtins import int
 from past.builtins import unicode
 
