@@ -3,6 +3,11 @@ from __future__ import print_function
 import os, re, sys, time, json
 from functools import partial
 
+# Python 2 backwards compatibility
+from future.utils import PY2
+if PY2:
+    from builtins import int
+
 from bs4 import BeautifulSoup
 
 from twisted.internet import reactor
@@ -1256,7 +1261,7 @@ class SystemTest(SystemTestMixin, RunBinTahoeMixin, unittest.TestCase):
                 # this is really bytes received rather than sent, but it's
                 # convenient and basically measures the same thing
                 bytes_sent = results.get_ciphertext_fetched()
-                self.failUnless(isinstance(bytes_sent, (int, long)), bytes_sent)
+                self.failUnless(isinstance(bytes_sent, int), bytes_sent)
 
                 # We currently don't support resumption of upload if the data is
                 # encrypted with a random key.  (Because that would require us

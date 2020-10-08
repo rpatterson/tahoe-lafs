@@ -1,7 +1,14 @@
-from six.moves import cStringIO as StringIO
 import attr
+
+# Python 2 backwards compatibility
+from future.utils import PY2
+from six.moves import cStringIO as StringIO
+if PY2:
+    from builtins import int
+
 from twisted.internet import defer, reactor
 from foolscap.api import eventually, fireEventually
+
 from allmydata import client
 from allmydata.nodemaker import NodeMaker
 from allmydata.interfaces import SDMF_VERSION, MDMF_VERSION
@@ -116,8 +123,8 @@ class FakeStorageServer(object):
                     continue
                 vector = response[shnum] = []
                 for (offset, length) in readv:
-                    assert isinstance(offset, (int, long)), offset
-                    assert isinstance(length, (int, long)), length
+                    assert isinstance(offset, int), offset
+                    assert isinstance(length, int), length
                     vector.append(shares[shnum][offset:offset+length])
             return response
         d.addCallback(_read)

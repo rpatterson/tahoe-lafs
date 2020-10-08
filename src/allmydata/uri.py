@@ -11,16 +11,17 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import re
+
+# Python 2 backwards compatibility
 from future.utils import PY2
 if PY2:
     # Don't import bytes or str, to prevent future's newbytes leaking and
     # breaking code that only expects normal bytes.
     from future.builtins import filter, map, zip, ascii, chr, hex, input, next, oct, open, pow, round, super, dict, list, object, range, max, min  # noqa: F401
     str = unicode
-
-from past.builtins import unicode, long
-
-import re
+    from builtins import int
+from past.builtins import unicode
 
 from zope.interface import implementer
 from twisted.python.components import registerAdapter
@@ -101,7 +102,7 @@ class CHKFileURI(_BaseURI):
     def to_string(self):
         assert isinstance(self.needed_shares, int)
         assert isinstance(self.total_shares, int)
-        assert isinstance(self.size, (int,long))
+        assert isinstance(self.size, int)
 
         return (b'URI:CHK:%s:%s:%d:%d:%d' %
                 (base32.b2a(self.key),
@@ -157,7 +158,7 @@ class CHKFileVerifierURI(_BaseURI):
     def to_string(self):
         assert isinstance(self.needed_shares, int)
         assert isinstance(self.total_shares, int)
-        assert isinstance(self.size, (int,long))
+        assert isinstance(self.size, int)
 
         return (b'URI:CHK-Verifier:%s:%s:%d:%d:%d' %
                 (si_b2a(self.storage_index),
@@ -904,7 +905,7 @@ def pack_extension(data):
     pieces = []
     for k in sorted(data.keys()):
         value = data[k]
-        if isinstance(value, (int, long)):
+        if isinstance(value, int):
             value = b"%d" % value
         if isinstance(k, unicode):
             k = k.encode("utf-8")

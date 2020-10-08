@@ -7,8 +7,12 @@ from twisted.web.resource import (
     Resource,  # note: Resource is an old-style class
     ErrorPage,
 )
-
 from nevow import url
+
+# Disable the web framework until a Python 3 replacement is in place
+from future.utils import PY2
+if PY2:
+    from builtins import int
 
 from allmydata.interfaces import ExistingChildError
 from allmydata.monitor import Monitor
@@ -388,7 +392,7 @@ class FileDownloader(Resource, object):
         # list of (first,last) inclusive range tuples.
 
         filesize = self.filenode.get_size()
-        assert isinstance(filesize, (int,long)), filesize
+        assert isinstance(filesize, int), filesize
 
         try:
             # byte-ranges-specifier
@@ -449,7 +453,7 @@ class FileDownloader(Resource, object):
                           'attachment; filename="%s"' % self.filename)
 
         filesize = self.filenode.get_size()
-        assert isinstance(filesize, (int,long)), filesize
+        assert isinstance(filesize, int), filesize
         first, size = 0, None
         contentsize = filesize
         req.setHeader("accept-ranges", "bytes")

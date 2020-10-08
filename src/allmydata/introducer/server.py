@@ -1,10 +1,17 @@
 
 import time, os.path, textwrap
+
+# Python 2 backwards compatibility
+from future.utils import PY2
+if PY2:
+    from builtins import int
+
 from zope.interface import implementer
 from twisted.application import service
 from twisted.internet import defer
 from twisted.python.failure import Failure
 from foolscap.api import Referenceable
+
 import allmydata
 from allmydata import node
 from allmydata.util import log, rrefutil
@@ -242,7 +249,7 @@ class IntroducerService(service.MultiService, Referenceable):
                 if "seqnum" in old_ann:
                     # must beat previous sequence number to replace
                     if ("seqnum" not in ann
-                        or not isinstance(ann["seqnum"], (int,long))):
+                        or not isinstance(ann["seqnum"], int)):
                         self.log("not replacing old ann, no valid seqnum",
                                  level=log.NOISY, umid="ySbaVw")
                         self._debug_counts["inbound_no_seqnum"] += 1

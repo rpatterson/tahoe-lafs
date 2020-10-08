@@ -1,8 +1,12 @@
-import six
 import heapq, traceback, array, stat, struct
 from types import NoneType
 from stat import S_IFREG, S_IFDIR
 from time import time, strftime, localtime
+
+# Python 2 backwards compatibility
+from future.utils import PY2
+if PY2:
+    from builtins import int
 
 from zope.interface import implementer
 from twisted.python import components
@@ -42,9 +46,6 @@ noisy = True
 from allmydata.util.log import NOISY, OPERATIONAL, WEIRD, \
     msg as logmsg, PrefixingLogMixin
 
-if six.PY3:
-    long = int
-
 def eventually_callback(d):
     return lambda res: eventually(d.callback, res)
 
@@ -64,7 +65,7 @@ def _to_sftp_time(t):
     """SFTP times are unsigned 32-bit integers representing UTC seconds
     (ignoring leap seconds) since the Unix epoch, January 1 1970 00:00 UTC.
     A Tahoe time is the corresponding float."""
-    return long(t) & long(0xFFFFFFFF)
+    return int(t) & int(0xFFFFFFFF)
 
 
 def _convert_error(res, request):
@@ -223,7 +224,7 @@ def _populate_attrs(childnode, metadata, size=None):
         if childnode and size is None:
             size = childnode.get_size()
         if size is not None:
-            _assert(isinstance(size, (int, long)) and not isinstance(size, bool), size=size)
+            _assert(isinstance(size, int) and not isinstance(size, bool), size=size)
             attrs['size'] = size
         perms = S_IFREG | 0o666
 
@@ -255,7 +256,7 @@ def _attrs_to_metadata(attrs):
 
     for key in attrs:
         if key == "mtime" or key == "ctime" or key == "createtime":
-            metadata[key] = long(attrs[key])
+            metadata[key] = int(attrs[key])
         elif key.startswith("ext_"):
             metadata[key] = str(attrs[key])
 
@@ -925,7 +926,7 @@ class GeneralSFTPFile(PrefixingLogMixin):
             return defer.execute(_closed)
 
         size = attrs.get("size", None)
-        if size is not None and (not isinstance(size, (int, long)) or size < 0):
+        if size is not None and (not isinstance(size, int) or size < 0):
             def _bad(): raise SFTPError(FX_BAD_MESSAGE, "new size is not a valid nonnegative integer")
             return defer.execute(_bad)
 
